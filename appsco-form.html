@@ -151,15 +151,8 @@ Appsco form component
             },
 
             __handleFormError: function(event) {
-
-                // Timeout to be removed - this is for loader presentation.
-                setTimeout(function() {
-
-                    this._error = event.detail.error.message;
-
-                    this._loader = false;
-
-                }.bind(this), 2000);
+                this._error = event.detail.error.message;
+                this._loader = false;
             },
 
             __handleFormResponse: function(event) {
