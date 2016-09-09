@@ -13,6 +13,8 @@
 <link rel="import" href="../iron-localstorage/iron-localstorage.html">
 
 <link rel="import" href="appsco-form-error.html">
+<link rel="import" href="appsco-loader.html">
+<link rel="import" href="login-with.html">
 
 <link rel="import" href="style-shared.html">
 
@@ -49,9 +51,54 @@ Appsco login form component
         <paper-card heading="[[ title ]]">
             <div class="card-content layout vertical">
 
-                <div class="content-wrapper"><content select=".content-info"></content></div>
+                <div class="content-wrapper">
+                    <content select=".info"></content>
+                </div>
 
-                <div class="content-wrapper"><content select=".content-additional-info"></content></div>
+                <appsco-loader active="[[ _loader ]]" loader-alt="Appsco is signing you in" multi-color></appsco-loader>
+
+                <form-error message="[[ _error ]]"></form-error>
+
+                <form is="iron-form"
+                      method="[[ method ]]"
+                      action="[[ action ]]"
+                      id="appscoLoginForm"
+                      on-input="__handleInputChange"
+                      on-iron-form-presubmit="__handleFormPresubmit"
+                      on-iron-form-error="__handleFormError"
+                      on-iron-form-response="__handleFormResponse">
+
+                        <paper-input type="email" name="username" id="username" label="email" required></paper-input>
+                        <paper-input type="password" name="password" id="password" label="password" required></paper-input>
+
+                        <div class="remember-me-section layout horizontal mt-10">
+                            <paper-checkbox id="rememberMe" name="rememberMe" class="flex" on-change="__handleRememberMeChange">Remember me</paper-checkbox>
+                            <span class="flex text-right cursor-pointer" on-tap="__showResetPassword">Password forgotten?</span>
+                        </div>
+
+                        <paper-button class="btn-primary btn-block mt-30" on-tap="__submitForm">[[ actionName ]]</paper-button>
+                </form>
+
+                <template is="dom-if" if="[[ _loginWithExists ]]">
+                    
+                    <login-with 
+                        facebook="[[ facebookLogin ]]" 
+                        google="[[ googleLogin ]]">
+                    </login-with>
+
+                </template>
+
+                <div class="additional-info-section text-center mt-50">
+                    <template is="dom-if" if="[[ hasAccounts ]]">
+                        <paper-button class="link primary" on-tap="__showAccountList">Back</paper-button>
+                        to accounts
+                    </template>
+
+                    <template is="dom-if" if="[[ !hasAccounts ]]">
+                        Don't have account?
+                        <paper-button class="link primary" on-tap="__showSignupForm">Sign up</paper-button>
+                    </template>
+                </div>
 
             </div>
         </paper-card>
@@ -67,6 +114,59 @@ Appsco login form component
                 title: {
                     type: String,
                     value: 'Login'
+                },
+
+                actionName: {
+                    type: String,
+                    value: 'Submit'
+                },
+
+                method: {
+                    type: String,
+                    value: 'get'
+                },
+
+                action: {
+                    type: String,
+                    value: '/'
+                },
+
+                _error: {
+                    type: String,
+                    value: ''
+                },
+
+                _loader: {
+                    type: Boolean,
+                    value: false
+                },
+
+                rememberMe: {
+                    type: Boolean,
+                    value: false,
+                    notify: true
+                },
+
+                facebookLogin: {
+                    type: String,
+                    value: '',
+                    notify: true
+                },
+
+                googleLogin: {
+                    type: String,
+                    value: '',
+                    notify: true
+                },
+
+                _loginWithExists: {
+                    type: Boolean,
+                    value: false
+                },
+
+                hasAccounts: {
+                    type: Boolean,
+                    value: false
                 },
 
                 animationConfig: {
@@ -93,7 +193,58 @@ Appsco login form component
 
             behaviors: [
                 Polymer.NeonAnimatableBehavior
-            ]
+            ],
+
+            attached: function() {
+
+                this._loginWithExists = (this.facebookLogin && this.facebookLogin != '') || (this.googleLogin && this.googleLogin != '') ? true : false;
+
+            },
+
+            __submitForm: function() {
+                this.$.appscoLoginForm.submit();
+            },
+
+            __handleInputChange: function() {
+                this._error = '';
+            },
+
+            __handleFormPresubmit: function(event) {
+                var form = event.target,
+                    basic = btoa(form.request.params.username+":"+form.request.params.password);
+
+//                form.request.queryString = '';
+//                event.target.headers.authorization = "token 4mp22mlvwv8kk00804owskwko08o8kcw0ocgoc80cksss4cg0c4n636060eu4g0sckkwsscock0848gk44ws4oowwgowkcscckgs";
+                // event.target.headers.authorization = "Basic " + basic;
+                this._loader = true;
+            },
+
+            __handleFormError: function(event) {
+                // this._error = event.detail.error.message;
+                this._error = 'Error occured. Please try again';
+
+                this._loader = false;
+            },
+
+            __handleFormResponse: function() {
+                this._loader = false;
+            },
+
+            __handleRememberMeChange: function() {
+                this.rememberMe = !this.rememberMe;
+            },
+
+            __showResetPassword: function() {
+                this.fire('show-reset-password-form');
+            },
+
+            __showAccountList: function() {
+                this.fire('show-account-list');
+            },
+
+            __showSignupForm: function() {
+                this.fire('show-signup-form');
+            }
         });
     </script>
 </dom-module>

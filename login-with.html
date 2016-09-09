@@ -32,6 +32,12 @@ Login with component
             :host paper-button:focus {
                 font-weight: normal;
             }
+            :host paper-button.facebook {
+                background-color: #3b5998;
+            }
+            :host paper-button.google {
+                background-color: #db4437;
+            }
             :host paper-button iron-icon {
                 width: 14px;
                 height: 14px;
@@ -50,7 +56,7 @@ Login with component
             }
             :host .or-login-text {
                 width: 100px;
-                background-color: var(--default-background-color);
+                background-color: #ffffff;
                 color: var(--text-color-light);
                 position: absolute;
                 top: -3px;
@@ -68,35 +74,39 @@ Login with component
             }
         </style>
 
-        <template is="dom-if" if="{{ _listHasItems }}">
-            <div class="login-with-section layout vertical mt-30">
-                <div class="or-login-head flex">
-                    <hr>
-                    <span class="or-login-text">or login with</span>
-                </div>
-
-                <div class="login-links layout horizontal wrap flex-equal-justified mt-10">
-                    <template is="dom-repeat" items="[[ loginList ]]">
-
-                        <div class="mt-10">
-                            <a href="[[ item.url ]]">
-                                <paper-button style="background-color: {{ item.color }}">
-
-                                    <template is="dom-if" if="{{ item.iconExists }}">
-                                        <iron-icon icon="{{ item.icon }}"></iron-icon>
-                                    </template>
-
-                                    {{ item.title }}
-
-                                </paper-button>
-                            </a>
-                        </div>
-
-                    </template>
-                </div>
-
+        <div class="login-with-section layout vertical mt-30">
+            <div class="or-login-head flex">
+                <hr>
+                <span class="or-login-text">or login with</span>
             </div>
-        </template>
+
+            <div class="login-links layout horizontal wrap flex-equal-justified mt-20">
+            
+                <template is="dom-if" if="[[ facebook ]]">
+                    <div class="mt-10">
+                        <a href="[[ facebook ]]">
+                            <paper-button class="facebook">
+                                <iron-icon icon="social:mood"></iron-icon>
+                                Facebook
+                            </paper-button>
+                        </a>
+                    </div>
+                </template>
+
+                <template is="dom-if" if="[[ google ]]">
+                    <div class="mt-10">
+                        <a href="[[ google ]]">
+                            <paper-button class="google">
+                                <iron-icon icon="social:mood"></iron-icon>
+                                Google
+                            </paper-button>
+                        </a>
+                    </div>
+                </template>
+            
+            </div>
+
+        </div>
 
     </template>
 
@@ -106,32 +116,15 @@ Login with component
             is: 'login-with',
 
             properties: {
-                loginList: {
-                    type: Array,
-                    value: []
+                facebook: {
+                    type: String,
+                    value: ''
                 },
 
-                _itemIconExists: {
-                    type: Boolean,
-                    value: false
-                },
-
-                _listHasItems: {
-                    type: Boolean,
-                    value: false
+                google: {
+                    type: String,
+                    value: ''
                 }
-            },
-
-            ready: function() {
-
-                this._listHasItems = (this.loginList.length > 0 ? true: false);
-
-                this.loginList.forEach(function(item) {
-
-                    item.iconExists = (item.icon && item.icon != null && item.icon != '');
-
-                });
-
             }
         });
     </script>

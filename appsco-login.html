@@ -37,7 +37,6 @@ It shows how to use login screens inside another custom element.
         <style include="iron-flex iron-flex-alignment">
             :host {
                 display: block;
-                background-color: var(--default-background-color);
                 @apply(--paper-font-common-base);
                 @apply(--appsco-login);
             }
@@ -57,61 +56,25 @@ It shows how to use login screens inside another custom element.
                              attr-for-selected="name"
                              on-neon-animation-finish="__onPageAnimationFinish">
 
-                <appsco-form
+                <appsco-login-form
                         name="login-form"
                         method="get"
                         action="http://appsco.loc/app_dev.php/api/v2/me"
                         title="Login"
                         action-name="Login"
-                        on-iron-form-presubmit="__handleLoginFormPresubmit"
+                        remember-me="{{ _rememberMe }}"
+                        facebook-login="/facebook"
+                        google-login="/google"
+                        has-accounts="[[ _hasAccounts ]]"
+                        on-show-reset-password-form="__showResetPasswordForm"
+                        on-show-signup-form="__showSignupForm"
+                        on-show-account-list="__showAccountList"
                         on-iron-form-error="__handleLoginFormResponse"
                         on-iron-form-response="__handleLoginFormResponse">
 
-                    <div class="content-info"></div>
+                    <div class="info"></div>
 
-                    <div class="content-form">
-                        <paper-input type="email" name="username" id="username" label="email" required></paper-input>
-                        <paper-input type="password" name="password" id="password" label="password" required></paper-input>
-
-                        <div class="remember-me-section layout horizontal mt-10">
-                            <paper-checkbox id="rememberMe" name="rememberMe" class="flex" on-change="__handleRememberMeChange">Remember me</paper-checkbox>
-                            <span class="flex text-right cursor-pointer" on-tap="__showResetPassword">Password forgotten?</span>
-                        </div>
-                    </div>
-
-                    <div class="content-additional-info">
-
-                        <login-with
-                                login-list='[
-                                            {
-                                                "title": "Facebook",
-                                                "icon": "social:mood",
-                                                "color": "#3b5998"
-                                            },
-                                            {
-                                                "title": "Google",
-                                                "color": "#db4437"
-                                            }
-                                        ]'>
-                        </login-with>
-
-                        <template is="dom-if" if="[[ _hasAccounts ]]">
-                            <div class="additional-info-section text-center mt-50">
-                                <paper-button class="link primary" on-tap="__showAccountList">Back</paper-button>
-                                to accounts
-                            </div>
-                        </template>
-
-                        <template is="dom-if" if="[[ !_hasAccounts ]]">
-                            <div class="additional-info-section text-center mt-50">
-                                Don't have account?
-                                <paper-button class="link primary" on-tap="__showSignup">Sign up</paper-button>
-                            </div>
-                        </template>
-
-                    </div>
-
-                </appsco-form>
+                </appsco-login-form>
 
                 <appsco-accounts
                         id="accounts"
@@ -140,7 +103,7 @@ It shows how to use login screens inside another custom element.
 
                     <div class="additional-info-section text-center mt-50">
                         Want to create another account?
-                        <paper-button class="link primary" on-tap="__showSignup">Sign up</paper-button>
+                        <paper-button class="link primary" on-tap="__showSignupForm">Sign up</paper-button>
                     </div>
                 </appsco-accounts>
 
@@ -252,7 +215,8 @@ It shows how to use login screens inside another custom element.
 
                 _rememberMe: {
                     type: Boolean,
-                    value: false
+                    value: false,
+                    notify: true
                 },
 
                 accounts: {
@@ -313,11 +277,11 @@ It shows how to use login screens inside another custom element.
                 this.selected = 'account-login';
             },
 
-            __showSignup: function(event) {
+            __showSignupForm: function(event) {
                 this.selected = 'signup-form';
             },
 
-            __showResetPassword: function() {
+            __showResetPasswordForm: function() {
                 this.selected = 'reset-password-form';
             },
 
@@ -334,23 +298,28 @@ It shows how to use login screens inside another custom element.
 
             },
 
-            __handleLoginFormPresubmit: function(event) {
-                var form = event.target,
-                    basic = btoa(form.request.params.username+":"+form.request.params.password);
+//             __handleLoginFormPresubmit: function(event) {
+//                 var form = event.target,
+//                     basic = btoa(form.request.params.username+":"+form.request.params.password);
 
-//                form.request.queryString = '';
-//                event.target.headers.authorization = "token 4mp22mlvwv8kk00804owskwko08o8kcw0ocgoc80cksss4cg0c4n636060eu4g0sckkwsscock0848gk44ws4oowwgowkcscckgs";
-                event.target.headers.authorization = "Basic " + basic;
+// //                form.request.queryString = '';
+// //                event.target.headers.authorization = "token 4mp22mlvwv8kk00804owskwko08o8kcw0ocgoc80cksss4cg0c4n636060eu4g0sckkwsscock0848gk44ws4oowwgowkcscckgs";
+//                 event.target.headers.authorization = "Basic " + basic;
 
-            },
+//             },
 
             __handleLoginFormResponse: function(event) {
-                this._loginAccount = event.detail.response.account;
-                this.__saveAccountToLocalStorage();
-            },
 
-            __handleRememberMeChange: function() {
-                this._rememberMe = !this._rememberMe;
+                // this._loginAccount = event.detail.response.account;
+
+                this._loginAccount = {
+                    first_name: "Nikola",
+                    last_name: "Vucinic",
+                    email: "nikola.vucinic@boutsourcing.com",
+                    picture_url: "https://my-dev.appsco.com/bundles/appscodashboardapproot/img/profile-avatar.png"
+                };
+
+                this.__saveAccountToLocalStorage();
             },
 
             __handleAccountLoginFormResponse: function(event) {
