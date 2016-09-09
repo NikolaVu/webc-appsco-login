@@ -40,15 +40,15 @@ Appsco account login component
                 height: 96px;
                 @apply(--round-element);
             }
-            :host .account .info-lead {
-                font-size: 120%;
+            :host .account .info-lead, :host .account .info-additional {
                 margin: 0;
                 display: block;
             }
+            :host .account .info-lead {
+                font-size: 14px;
+            }
             :host .account .info-additional {
                 color: var(--text-color);
-                font-size: 90%;
-                margin: 0;
                 padding: 0;
             }
         </style>
@@ -74,7 +74,7 @@ Appsco account login component
                             <span class="info-lead truncate">[[ _accountDisplay ]]</span>
                         </template>
 
-                        <span class="info-additional truncate">[[ account.email ]]</span>
+                        <span class="info-additional text-center truncate">[[ account.email ]]</span>
                     </div>
                 </div>
 

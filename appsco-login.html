@@ -69,8 +69,8 @@ It shows how to use login screens inside another custom element.
                     <div class="content-info"></div>
 
                     <div class="content-form">
-                        <paper-input type="email" name="username" id="username" label="email" value="{{ _loginAccount.email }}" required></paper-input>
-                        <paper-input type="password" name="password" id="password" label="password" value="{{ _loginAccount.password }}" required></paper-input>
+                        <paper-input type="email" name="username" id="username" label="email" required></paper-input>
+                        <paper-input type="password" name="password" id="password" label="password" required></paper-input>
 
                         <div class="remember-me-section layout horizontal mt-10">
                             <paper-checkbox id="rememberMe" name="rememberMe" class="flex" on-change="__handleRememberMeChange">Remember me</paper-checkbox>
@@ -174,9 +174,7 @@ It shows how to use login screens inside another custom element.
                         action-name="Sign up"
                         on-iron-form-response="__handleSignupFormResponse">
 
-                    <div class="content-info">
-                        Something before form info....
-                    </div>
+                    <div class="content-info"></div>
 
                     <div class="content-form">
                         <paper-input type="email" name="username" label="email" required></paper-input>
@@ -248,13 +246,7 @@ It shows how to use login screens inside another custom element.
 
                 _loginAccount: {
                     type: Object,
-                    value: function() {
-                        return {
-                            email: '',
-                            password: ''
-                        }
-                    },
-                    notify: true
+                    value: {}
                 },
 
                 _rememberMe: {
@@ -342,17 +334,17 @@ It shows how to use login screens inside another custom element.
             },
 
             __handleLoginFormPresubmit: function(event) {
+                var form = event.target,
+                    basic = btoa(form.request.params.username+":"+form.request.params.password);
 
-                var form = event.target;
-
-                var basic = btoa(form.request.params.username+":"+form.request.params.password);
-                form.request.queryString = '';
-                event.target.headers.authorization = "token 4mp22mlvwv8kk00804owskwko08o8kcw0ocgoc80cksss4cg0c4n636060eu4g0sckkwsscock0848gk44ws4oowwgowkcscckgs";
+//                form.request.queryString = '';
+//                event.target.headers.authorization = "token 4mp22mlvwv8kk00804owskwko08o8kcw0ocgoc80cksss4cg0c4n636060eu4g0sckkwsscock0848gk44ws4oowwgowkcscckgs";
+                event.target.headers.authorization = "Basic " + basic;
 
             },
 
             __handleLoginFormResponse: function(event) {
-                console.log('Login form response', event);
+                this._loginAccount = event.detail.response.account;
                 this.__saveAccountToLocalStorage();
             },
 
@@ -393,12 +385,8 @@ It shows how to use login screens inside another custom element.
 
             __saveAccountToLocalStorage: function() {
 
-
-//                this._loginAccount.first_name = 'AAAA';
-//                this._loginAccount.last_name = 'BBBB';
-//                this._loginAccount.picture_url = 'http://app-layout-assets.appspot.com/assets/PharrellWilliams.jpg';
-
                 if (this._rememberMe) {
+                    var newAccount = this._loginAccount;
 
                     // Sync accounts from storage.
                     this.$.localStorageAccounts.reload();
@@ -410,7 +398,7 @@ It shows how to use login screens inside another custom element.
 
                         accounts.forEach(function(account) {
 
-                            if (account.email === this._loginAccount.email) {
+                            if (account.email === newAccount.email) {
                                 accountExists = true;
                             }
 
@@ -418,12 +406,12 @@ It shows how to use login screens inside another custom element.
 
 
                         if (!accountExists) {
-                            this.push('accounts', this._loginAccount);
+                            this.push('accounts', newAccount);
 
                         }
                     }
                     else {
-                        this.accounts = [this._loginAccount];
+                        this.accounts = [newAccount];
                     }
                 }
             },
