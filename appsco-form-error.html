@@ -1,0 +1,127 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="../neon-animation/neon-animation-runner-behavior.html">
+<link rel="import" href="../neon-animation/animations/fade-in-animation.html">
+<link rel="import" href="../neon-animation/animations/fade-out-animation.html">
+
+<link rel="import" href="style-shared.html">
+
+<!--
+`appsco-form-error`
+Appsco brand component
+
+@demo demo/appsco-form-error.html
+@demo demo/index.html - complete demo for all elements.
+-->
+
+<dom-module id="form-error">
+    <template>
+        <style include="iron-flex iron-flex-alignment">
+            :host {
+                width: 100%;
+                @apply(--paper-font-common-base);
+            }
+            :host .box {
+                padding: 12px;
+                background-color: var(--form-error-background-color);
+                color: var(--form-error-text-color);
+                font-size: var(--font-size-small);
+                @apply(--form-error-box);
+            }
+        </style>
+
+        <div class="box">
+            [[ _message ]]
+        </div>
+
+    </template>
+
+    <script>
+        Polymer({
+
+            is: 'form-error',
+
+            properties: {
+                _error: {
+                    type: Boolean,
+                    value: false,
+                    reflectToAttribute: true
+                },
+
+                message: {
+                    type: String,
+                    value: '',
+                    notify: true
+                },
+
+                _message: {
+                    type: String,
+                    value: ''
+                },
+
+                animationConfig: {
+                    value: function() {
+                        return {
+                            'entry': {
+                                name: 'fade-in-animation',
+                                node: this,
+                                timing: {
+                                    duration: 300
+                                }
+                            },
+                            'exit': {
+                                name: 'fade-out-animation',
+                                node: this,
+                                timing: {
+                                    duration: 200
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+
+            behaviors: [
+                Polymer.NeonAnimationRunnerBehavior
+            ],
+
+            listeners: {
+                'message-changed': '__onErrorChanged',
+                'neon-animation-finish': '__onNeonAnimationFinish'
+            },
+
+            attached: function() {
+
+                if (!this._error) {
+                    this.style.display = 'none';
+                }
+
+            },
+
+            __onErrorChanged: function() {
+                var message = this.message;
+
+                if (message && message != '') {
+
+                    this._message = message;
+                    this.playAnimation('entry');
+                    this.style.display = 'block';
+                    this._error = true;
+                }
+                else {
+                    this.playAnimation('exit');
+                    this._error = false;
+                }
+            },
+
+            __onNeonAnimationFinish: function() {
+
+                if (!this._error) {
+                    this.style.display = 'none';
+                    this._message = '';
+                }
+
+            }
+        });
+    </script>
+</dom-module>

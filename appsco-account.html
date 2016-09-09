@@ -1,0 +1,210 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+
+<link rel="import" href="style-shared.html">
+
+<!--
+`appsco-account`
+Appsco account component
+
+@demo demo/appsco-account.html
+@demo demo/index.html - complete demo for all elements.
+-->
+
+<dom-module id="appsco-account">
+    <template>
+        <style include="iron-flex iron-flex-alignment">
+            :host {
+                display: block;
+                background-color: var(--default-background-color);
+                border-bottom: 1px solid var(--divider-color);
+                min-height: 68px;
+                position: relative;
+                @apply(--paper-font-common-base);
+                @apply(--appsco-account);
+            }
+            :host:first-child {
+                border-top: 1px solid var(--divider-color);
+                @apply(--appsco-account-first-child);
+            }
+            :host .account {
+                padding: 10px 20px;
+                width: 100%;
+                height: 100%;
+                position: absolute;
+                top: 0;
+                left: 0;
+                box-sizing: border-box;
+                @apply(--appsco-account);
+            }
+            :host .account:hover {
+                background-color: var(--divider-color);
+            }
+            :host .account-img {
+                width: 48px;
+                height: 48px;
+                @apply(--round-element);
+                @apply(--appsco-account-img);
+            }
+            :host .account .info-lead {
+                font-size: 120%;
+                margin: 0;
+                display: block;
+                @apply(--appsco-account-info-lead);
+            }
+            :host .account .info-additional {
+                color: var(--text-color);
+                font-size: 90%;
+                margin: 0;
+                padding: 0;
+                height: 100%;
+                line-height: 48px;
+                @apply(--appsco-account-info-additional);
+            }
+            :host .account .info-lead, :host .account .info-additional {
+                display: block;
+                width: 95%;
+            }
+            :host[_name] .account .info-additional {
+                margin-top: 0;
+                height: auto;
+            }
+            :host[_image][_name] .account .account-info {
+                margin: 3px 0 0 10px;
+            }
+            :host[_image] .account .account-info {
+                margin: 0 0 0 10px;
+            }
+            :host[_image][_name] .account .info-additional {
+                margin-top: 3px;
+            }
+            :host[_image] .account .info-additional {
+                margin-top: 0;
+                line-height: 48px;
+            }
+            :host[_image][_name] .account .info-additional {
+                line-height: 1;
+            }
+            :host[_name] .account .account-info {
+                margin-top: 4px;
+            }
+            :host[_name] .account .info-additional {
+                margin-top: 3px;
+                line-height: 1;
+            }
+            :host .account iron-icon {
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                right: 14px;
+                margin: auto;
+            }
+        </style>
+
+        <div class="account cursor-pointer layout horizontal clearfix" on-tap="__chooseAccount">
+
+            <template is="dom-if" if="[[ account.picture_url ]]">
+                <img src="[[ account.picture_url ]]" class="account-img">
+            </template>
+
+            <div class="account-info flex truncate">
+                <template is="dom-if" if="[[ _accountDisplay ]]">
+                    <span class="info-lead truncate">[[ account.first_name ]] [[ account.last_name ]]</span>
+                </template>
+
+                <span class="info-additional truncate">[[ account.email ]]</span>
+            </div>
+
+            <template is="dom-if" if="[[ !removeAccount ]]">
+                <iron-icon icon="icons:chevron-right" class="flex"></iron-icon>
+            </template>
+
+            <template is="dom-if" if="[[ removeAccount ]]">
+                <iron-icon icon="icons:clear" class="flex" on-tap="__removeAccount"></iron-icon>
+            </template>
+
+        </div>
+
+    </template>
+
+    <script>
+        Polymer({
+
+            is: 'appsco-account',
+
+            properties: {
+                account: {
+                    type: Object,
+                    value: {},
+                    notify: true
+                },
+
+                _accountDisplay: {
+                    type: String,
+                    value: ''
+                },
+
+                removeAccount: {
+                    type: Boolean,
+                    value: false
+                },
+
+                _image: {
+                    type: Boolean,
+                    value: false,
+                    reflectToAttribute: true
+                },
+
+                _name: {
+                    type: Boolean,
+                    value: false,
+                    reflectToAttribute: true
+                }
+            },
+
+            ready: function() {
+                this.__checkAccountProperties();
+            },
+
+            __checkAccountProperties: function() {
+
+                this.set('_accountDisplay', '');
+
+                if (this.account.first_name && this.account.first_name != '') {
+                    this._accountDisplay = this.account.first_name;
+
+                    this._name = true;
+                }
+
+                if (this.account.last_name && this.account.last_name != '') {
+                    this._accountDisplay += ' ' + this.account.last_name;
+
+                    this._name = true;
+                }
+
+                if (this.account.picture_url && this.account.picture_url != '') {
+                    this._image = true;
+                }
+
+            },
+
+            __chooseAccount: function(event) {
+
+                this.fire('account-chosen', {
+                    account: this.account
+                });
+
+            },
+
+            __removeAccount: function(event) {
+
+                event.stopPropagation();
+
+                this.fire('remove-account', {
+                    account: this.account
+                });
+            }
+
+        });
+    </script>
+</dom-module>

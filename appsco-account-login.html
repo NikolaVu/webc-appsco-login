@@ -1,0 +1,214 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../iron-form/iron-form.html">
+<link rel="import" href="../paper-card/paper-card.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-button/paper-button.html">
+
+<link rel="import" href="../neon-animation/neon-animatable-behavior.html">
+<link rel="import" href="../neon-animation/animations/slide-from-right-animation.html">
+<link rel="import" href="../neon-animation/animations/slide-right-animation.html">
+
+<link rel="import" href="appsco-form.html">
+
+<link rel="import" href="style-shared.html">
+
+<!--
+`appsco-account-login`
+Appsco account login component
+
+@demo demo/appsco-account-login.html
+@demo demo/index.html - complete demo for all elements.
+-->
+
+<dom-module id="appsco-account-login">
+    <template>
+        <style include="iron-flex iron-flex-alignment">
+            :host {
+                display: block;
+                background-color: var(--default-background-color);
+                @apply(- -paper-font-common-base);
+            }
+            :host.iron-selected {
+                position: relative;
+            }
+            :host .account {
+                padding: 10px 20px;
+            }
+            :host .account-img {
+                width: 96px;
+                height: 96px;
+                @apply(--round-element);
+            }
+            :host .account .info-lead {
+                font-size: 120%;
+                margin: 0;
+                display: block;
+            }
+            :host .account .info-additional {
+                color: var(--text-color);
+                font-size: 90%;
+                margin: 0;
+                padding: 0;
+            }
+        </style>
+
+        <appsco-form
+                name="account-login-form"
+                method="[[ method ]]"
+                action="[[ action ]]"
+                title="[[ title ]]"
+                action-name="[[ actionName ]]">
+
+            <div class="content-info">
+
+                <div class="account layout vertical center">
+
+                    <template is="dom-if" if="[[ account.picture_url ]]">
+                        <img src="[[ account.picture_url ]]" class="account-img">
+                    </template>
+
+                    <div class="account-info mt-10 truncate">
+
+                        <template is="dom-if" if="[[ _accountDisplay ]]">
+                            <span class="info-lead truncate">[[ _accountDisplay ]]</span>
+                        </template>
+
+                        <span class="info-additional truncate">[[ account.email ]]</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="content-form">
+
+                <div class="content-wrapper">
+                    <content select=".content-form"></content>
+                </div>
+
+            </div>
+
+            <div class="content-additional-info">
+
+                <div class="content-wrapper">
+                    <content select=".content-additional-info"></content>
+                </div>
+
+            </div>
+
+        </appsco-form>
+
+
+
+
+        <!--<paper-card heading="[[ title ]]">-->
+            <!--<div class="card-content layout vertical">-->
+
+                <!--<div class="account layout vertical center">-->
+
+                    <!--<template is="dom-if" if="[[ account.picture_url ]]">-->
+                        <!--<img src="[[ account.picture_url ]]" class="account-img">-->
+                    <!--</template>-->
+
+                    <!--<div class="account-info mt-10 truncate">-->
+
+                        <!--<template is="dom-if" if="[[ _accountDisplay ]]">-->
+                            <!--<span class="info-lead truncate">[[ _accountDisplay ]]</span>-->
+                        <!--</template>-->
+
+                        <!--<span class="info-additional truncate">[[ account.email ]]</span>-->
+                    <!--</div>-->
+                <!--</div>-->
+
+                <!--<div class="content-wrapper">-->
+                    <!--<content></content>-->
+                <!--</div>-->
+
+            <!--</div>-->
+        <!--</paper-card>-->
+
+    </template>
+
+    <script>
+        Polymer({
+
+            is: 'appsco-account-login',
+
+            properties: {
+                title: {
+                    type: String,
+                    value: 'Login'
+                },
+
+                actionName: {
+                    type: String,
+                    value: 'Submit'
+                },
+
+                method: {
+                    type: String,
+                    value: 'get'
+                },
+
+                action: {
+                    type: String,
+                    value: '/'
+                },
+
+                account: {
+                    type: Object,
+                    value: {},
+                    notify: true
+                },
+
+                _accountDisplay: {
+                    type: Boolean,
+                    value: false
+                },
+
+                animationConfig: {
+                    value: function() {
+                        return {
+                            'entry': {
+                                name: 'slide-from-right-animation',
+                                node: this,
+                                timing: {
+                                    duration: 200
+                                }
+                            },
+                            'exit': {
+                                name: 'slide-right-animation',
+                                node: this,
+                                timing: {
+                                    duration: 300
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+
+            behaviors: [
+                Polymer.NeonAnimatableBehavior
+            ],
+
+            listeners: {
+                'account-changed': '__onAccountChanged'
+            },
+
+            __onAccountChanged: function() {
+
+                this.set('_accountDisplay', '');
+
+                if (this.account.first_name && this.account.first_name != '') {
+                    this._accountDisplay = this.account.first_name;
+                }
+
+                if (this.account.last_name && this.account.last_name != '') {
+                    this._accountDisplay += ' ' + this.account.last_name;
+                }
+
+            }
+        });
+    </script>
+</dom-module>

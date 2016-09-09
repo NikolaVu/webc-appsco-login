@@ -1,0 +1,57 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html">
+
+<link rel="import" href="appsco-account.html">
+
+<link rel="import" href="style-shared.html">
+
+<!--
+`appsco-account-list`
+Appsco account list component
+
+@demo demo/appsco-account-list.html
+@demo demo/index.html - complete demo for all elements.
+-->
+
+<dom-module id="appsco-account-list">
+    <template>
+        <style include="iron-flex iron-flex-alignment">
+            :host {
+                display: block;
+                background-color: var(--default-background-color);
+                @apply(--paper-font-common-base);
+                @apply(--appsco-account--list);
+            }
+        </style>
+
+        <template is="dom-repeat" items="{{ accounts }}">
+
+            <appsco-account
+                    account="{{ item }}"
+                    remove-account="[[ removeAccount ]]">
+            </appsco-account>
+
+        </template>
+
+    </template>
+
+    <script>
+        Polymer({
+
+            is: 'appsco-account-list',
+
+            properties: {
+                accounts: {
+                    type: Array,
+                    value: [],
+                    notify: true
+                },
+
+                removeAccount: {
+                    type: Boolean,
+                    value: false
+                }
+            }
+        });
+    </script>
+</dom-module>

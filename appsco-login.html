@@ -1,0 +1,469 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-form/iron-form.html">
+<link rel="import" href="../paper-card/paper-card.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html">
+
+<link rel="import" href="../neon-animation/neon-animated-pages.html">
+
+<link rel="import" href="../iron-localstorage/iron-localstorage.html">
+
+<link rel="import" href="appsco-loader.html">
+
+<link rel="import" href="style-shared.html">
+
+<link rel="import" href="appsco-brand.html">
+
+<link rel="import" href="appsco-form-error.html">
+<link rel="import" href="appsco-form.html">
+<link rel="import" href="appsco-login-form.html">
+<link rel="import" href="appsco-accounts.html">
+<link rel="import" href="appsco-account-login.html">
+<link rel="import" href="login-with.html">
+
+<!--
+`appsco-login`
+Appsco login demo - example of using all component elements from Appsco login scenario.
+It shows how to use login screens inside another custom element.
+
+@demo demo/appsco-login.html
+@demo demo/index.html - complete demo for all elements.
+-->
+
+<dom-module id="appsco-login">
+    <template>
+        <style include="iron-flex iron-flex-alignment">
+            :host {
+                display: block;
+                background-color: var(--default-background-color);
+                @apply(--paper-font-common-base);
+            }
+            :host .primary {
+                color: var(--link-color);
+            }
+            :host paper-button[toggles][active] {
+                @apply(--shadow-elevation-2dp);
+            }
+            :host appsco-login-form {
+                position: relative;
+            }
+        </style>
+
+        <neon-animated-pages class="flex"
+                             selected="{{ selected }}"
+                             attr-for-selected="name"
+                             on-neon-animation-finish="__onPageAnimationFinish">
+
+                <appsco-form
+                        name="login-form"
+                        method="get"
+                        action="http://appsco.loc/app_dev.php/api/v2/me"
+                        title="Login"
+                        action-name="Login"
+                        on-iron-form-presubmit="__handleLoginFormPresubmit"
+                        on-iron-form-error="__handleLoginFormResponse"
+                        on-iron-form-response="__handleLoginFormResponse">
+
+                    <div class="content-info"></div>
+
+                    <div class="content-form">
+                        <paper-input type="email" name="username" id="username" label="email" value="{{ _loginAccount.email }}" required></paper-input>
+                        <paper-input type="password" name="password" id="password" label="password" value="{{ _loginAccount.password }}" required></paper-input>
+
+                        <div class="remember-me-section layout horizontal mt-10">
+                            <paper-checkbox id="rememberMe" name="rememberMe" class="flex" on-change="__handleRememberMeChange">Remember me</paper-checkbox>
+                            <span class="flex text-right cursor-pointer" on-tap="__showResetPassword">Password forgotten?</span>
+                        </div>
+                    </div>
+
+                    <div class="content-additional-info">
+
+                        <login-with
+                                login-list='[
+                                            {
+                                                "title": "Facebook",
+                                                "icon": "social:mood",
+                                                "color": "#3b5998"
+                                            },
+                                            {
+                                                "title": "Google",
+                                                "color": "#db4437"
+                                            }
+                                        ]'>
+                        </login-with>
+
+                        <template is="dom-if" if="[[ _hasAccounts ]]">
+                            <div class="additional-info-section text-center mt-50">
+                                <paper-button class="link primary" on-tap="__showAccountList">Back</paper-button>
+                                to accounts
+                            </div>
+                        </template>
+
+                        <template is="dom-if" if="[[ !_hasAccounts ]]">
+                            <div class="additional-info-section text-center mt-50">
+                                Don't have account?
+                                <paper-button class="link primary" on-tap="__showSignup">Sign up</paper-button>
+                            </div>
+                        </template>
+
+                    </div>
+
+                </appsco-form>
+
+                <appsco-accounts
+                        id="accounts"
+                        name="account-list"
+                        title="[[ title ]]"
+                        accounts="[[ accounts ]]"
+                        remove-account="[[ _removeAccount ]]"
+                        on-account-chosen="__showAccountLogin"
+                        on-remove-account="__removeAccountFromLocaleStorage"
+                        on-tap="__handleAccountsTap">
+
+                    <div class="actions layout horizontal">
+                        <paper-button class="flex account btn-primary"
+                                      on-tap="__addNewAccount">
+                            Add account
+                        </paper-button>
+
+                        <paper-button
+                                id="actionRemoveAccount"
+                                class="flex account btn-danger"
+                                on-tap="__accountRemoval"
+                                toggles>
+                            Remove account
+                        </paper-button>
+                    </div>
+
+                    <div class="additional-info-section text-center mt-50">
+                        Want to create another account?
+                        <paper-button class="link primary" on-tap="__showSignup">Sign up</paper-button>
+                    </div>
+                </appsco-accounts>
+
+                <appsco-account-login
+                        name="account-login"
+                        method="post"
+                        action="/account-login"
+                        title="Account login"
+                        action-name="Login"
+                        on-iron-form-error="__handleAccountLoginFormResponse"
+                        on-iron-form-response="__handleAccountLoginFormResponse"
+                        account="{{ _selectedAccount }}">
+
+                    <div class="content-form">
+                        <paper-input type="password" name="password" label="password" required></paper-input>
+                        <paper-input type="email" name="username" value="{{ _selectedAccount.email }}" hidden></paper-input>
+                    </div>
+
+                    <div class="content-additional-info">
+                        <div class="additional-info-section text-center mt-50">
+                            <paper-button class="link" on-tap="__cancelAccountLogin">Cancel</paper-button>
+                        </div>
+                    </div>
+
+                </appsco-account-login>
+
+                <appsco-form
+                        name="signup-form"
+                        method="post"
+                        action="/signup"
+                        title="Signup for free"
+                        action-name="Sign up"
+                        on-iron-form-response="__handleSignupFormResponse">
+
+                    <div class="content-info">
+                        Something before form info....
+                    </div>
+
+                    <div class="content-form">
+                        <paper-input type="email" name="username" label="email" required></paper-input>
+                        <paper-input type="password" name="password" label="password" required></paper-input>
+                    </div>
+
+                    <div class="content-additional-info">
+                        <div class="mt-30">
+                            By registering, you agree to the
+                            <a href="#">privacy policy</a> and
+                            <a href="#">terms of service</a>.
+                            Just enter your e-mail and password and start using
+                            Appsco for free, no need for e-mail confirmation.
+                        </div>
+
+                        <div class="additional-info-section text-center mt-50">
+                            Already have account?
+                            <paper-button class="link primary" on-tap="__resolveLogin">Login</paper-button>
+                        </div>
+                    </div>
+
+                </appsco-form>
+
+                <appsco-form
+                        name="reset-password-form"
+                        method="post"
+                        action="/reset-password"
+                        title="Reset Password"
+                        action-name="Reset"
+                        on-iron-form-response="__handleResetPasswordFormResponse">
+
+                    <div class="content-info">
+                        Enter your email address and we'll send you a mail message with password reset link.
+                    </div>
+
+                    <div class="content-form">
+                        <paper-input type="email" name="username" label="email" required></paper-input>
+                    </div>
+
+                    <div class="content-additional-info additional-info-section text-center mt-50">
+                        Back to
+                        <paper-button class="link primary" on-tap="__resolveLogin">Login</paper-button>
+                    </div>
+
+                </appsco-form>
+
+        </neon-animated-pages>
+
+        <iron-localstorage
+                id="localStorageAccounts"
+                name="appsco-accounts"
+                value="{{ accounts }}"
+                on-iron-localstorage-load="__onLocalStorageLoad"
+                on-iron-localstorage-load-empty="__onLocalStorageLoadEmpty">
+        </iron-localstorage>
+
+    </template>
+
+    <script>
+        Polymer({
+
+            is: 'appsco-login',
+
+            properties: {
+                title: {
+                    type: String,
+                    value: 'Login'
+                },
+
+                _loginAccount: {
+                    type: Object,
+                    value: function() {
+                        return {
+                            email: '',
+                            password: ''
+                        }
+                    },
+                    notify: true
+                },
+
+                _rememberMe: {
+                    type: Boolean,
+                    value: false
+                },
+
+                accounts: {
+                    type: Array,
+                    value: [],
+                    notify: true
+                },
+
+                _hasAccounts: {
+                    type: Boolean,
+                    value: false
+                },
+
+                _selectedAccount: {
+                    type: Object,
+                    value: {},
+                    notify: true
+                },
+
+                selected: {
+                    type: String,
+                    value: ''
+                },
+
+                _removeAccount: {
+                    type: Boolean,
+                    value: false
+                }
+            },
+
+            ready: function() {
+
+                // Sync accounts from storage.
+                this.$.localStorageAccounts.reload();
+
+                this.__resolveLogin();
+            },
+
+            attached: function() {
+
+                if (!this.accounts) {
+                    this.accounts = [];
+                }
+
+            },
+
+            __showLoginForm: function() {
+                this.selected = 'login-form';
+            },
+
+            __showAccountList: function() {
+                this.selected = 'account-list';
+            },
+
+            __showAccountLogin: function(event) {
+                this.set('_selectedAccount', event.detail.account);
+
+                this.selected = 'account-login';
+            },
+
+            __showSignup: function(event) {
+                this.selected = 'signup-form';
+            },
+
+            __showResetPassword: function() {
+                this.selected = 'reset-password-form';
+            },
+
+            __resolveLogin: function() {
+
+                if (this.accounts && this.accounts.length > 0) {
+                    this._hasAccounts = true;
+                    this.__showAccountList();
+                }
+                else {
+                    this._hasAccounts = false;
+                    this.__showLoginForm();
+                }
+
+            },
+
+            __handleLoginFormPresubmit: function(event) {
+
+                var form = event.target;
+
+                var basic = btoa(form.request.params.username+":"+form.request.params.password);
+                form.request.queryString = '';
+                event.target.headers.authorization = "token 4mp22mlvwv8kk00804owskwko08o8kcw0ocgoc80cksss4cg0c4n636060eu4g0sckkwsscock0848gk44ws4oowwgowkcscckgs";
+
+            },
+
+            __handleLoginFormResponse: function(event) {
+                console.log('Login form response', event);
+                this.__saveAccountToLocalStorage();
+            },
+
+            __handleRememberMeChange: function() {
+                this._rememberMe = !this._rememberMe;
+            },
+
+            __handleAccountLoginFormResponse: function(event) {
+                console.log('Account login form response', event.detail);
+            },
+
+            __cancelAccountLogin: function() {
+                this.__showAccountList();
+            },
+
+            __handleSignupFormResponse: function(event) {
+                console.log('Signup form response', event.detail);
+            },
+
+            __handleResetPasswordFormResponse: function(event) {
+                console.log('Reset password form response', event.detail);
+            },
+
+            __addNewAccount: function() {
+                this.__showLoginForm();
+            },
+
+            __accountRemoval: function() {
+                this._removeAccount = !this._removeAccount;
+            },
+
+            __onLocalStorageLoadEmpty: function() {
+                this.__showLoginForm();
+            },
+
+            // It is required to be defined.
+            __onLocalStorageLoad: function() {},
+
+            __saveAccountToLocalStorage: function() {
+
+
+//                this._loginAccount.first_name = 'AAAA';
+//                this._loginAccount.last_name = 'BBBB';
+//                this._loginAccount.picture_url = 'http://app-layout-assets.appspot.com/assets/PharrellWilliams.jpg';
+
+                if (this._rememberMe) {
+
+                    // Sync accounts from storage.
+                    this.$.localStorageAccounts.reload();
+
+                    var accounts = this.accounts,
+                            accountExists = false;
+
+                    if (accounts) {
+
+                        accounts.forEach(function(account) {
+
+                            if (account.email === this._loginAccount.email) {
+                                accountExists = true;
+                            }
+
+                        }.bind(this));
+
+
+                        if (!accountExists) {
+                            this.push('accounts', this._loginAccount);
+
+                        }
+                    }
+                    else {
+                        this.accounts = [this._loginAccount];
+                    }
+                }
+            },
+
+            __removeAccountFromLocaleStorage: function(event) {
+                this._selectedAccount = event.detail.account;
+
+                var accounts = this.accounts,
+                    index = accounts.indexOf(this._selectedAccount);
+
+                this.splice('accounts', index, 1);
+
+                if (this.accounts.length === 0) {
+                    this._hasAccounts = false;
+                    this._removeAccount = false;
+                    this.$.actionRemoveAccount.active = false;
+
+                    this.__showLoginForm();
+                }
+            },
+
+            __handleAccountsTap: function(event) {
+                var target = Polymer.dom(event).rootTarget,
+                    removeAccountButton = this.$.actionRemoveAccount;
+
+                if (target != removeAccountButton) {
+                    this._removeAccount = false;
+                    removeAccountButton.active = false;
+                }
+            },
+
+            // If autofocus is set on paper-input it makes page transition inconsistent.
+            // This way we listen on page animation to finish so we can set focus on input.
+            __onPageAnimationFinish: function(event) {
+                var firstInputElement = event.detail.toPage.querySelector('paper-input');
+
+                if (firstInputElement) {
+                    firstInputElement.focus();
+                }
+            }
+        });
+    </script>
+</dom-module>

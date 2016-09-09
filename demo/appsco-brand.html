@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+    <title>appsco-login demo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../../neon-animation/neon-animated-pages.html">
+
+    <link rel="import" href="../appsco-brand.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles">
+        :root {
+            --brand-style: {
+                 margin: 10px 0;
+             };
+            --brand-logo: {
+                 margin-right: 20px;
+             }
+        }
+        :root .text-center {
+            text-align: center;
+        }
+        :root .centered {
+            max-width: 600px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="vertical-section-container centered">
+    <h3>Appsco brand demo</h3>
+
+    <demo-snippet>
+
+        <template is="dom-bind" id="loginScreens">
+
+            <div class="text-center">
+                <appsco-brand size="64" title="AppsCo" logo="https://appsco.com/bundles/appscodashboardapproot/img/appsco-logo.png"></appsco-brand>
+            </div>
+
+        </template>
+
+    </demo-snippet>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,99 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-form/iron-form.html">
+<link rel="import" href="../paper-card/paper-card.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html">
+
+<link rel="import" href="../neon-animation/animations/slide-from-left-animation.html">
+<link rel="import" href="../neon-animation/animations/slide-left-animation.html">
+<link rel="import" href="../neon-animation/neon-animatable-behavior.html">
+
+<link rel="import" href="../iron-localstorage/iron-localstorage.html">
+
+<link rel="import" href="appsco-form-error.html">
+
+<link rel="import" href="style-shared.html">
+
+<!--
+`appsco-login-form`
+Appsco login form component
+
+@demo demo/appsco-account-login.html
+@demo demo/index.html - complete demo for all elements.
+-->
+
+<dom-module id="appsco-login-form">
+    <template>
+        <style include="iron-flex iron-flex-alignment">
+            :host {
+                display: block;
+                @apply(--paper-font-common-base);
+                @apply(--appsco-form-common);
+                @apply(--appsco-form-login);
+
+                --paper-checkbox-size: 16px;
+            }
+            :host.iron-selected {
+                position: relative;
+            }
+            :host .remember-me-section {
+                font-size: var(--font-size-small);
+            }
+            :host .link {
+                color: var(--link-color);
+            }
+        </style>
+
+        <paper-card heading="[[ title ]]">
+            <div class="card-content layout vertical">
+
+                <div class="content-wrapper"><content select=".content-info"></content></div>
+
+                <div class="content-wrapper"><content select=".content-additional-info"></content></div>
+
+            </div>
+        </paper-card>
+
+    </template>
+
+    <script>
+        Polymer({
+
+            is: 'appsco-login-form',
+
+            properties: {
+                title: {
+                    type: String,
+                    value: 'Login'
+                },
+
+                animationConfig: {
+                    value: function() {
+                        return {
+                            'entry': {
+                                name: 'slide-from-left-animation',
+                                node: this,
+                                timing: {
+                                    duration: 300
+                                }
+                            },
+                            'exit': {
+                                name: 'slide-left-animation',
+                                node: this,
+                                timing: {
+                                    duration: 200
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+
+            behaviors: [
+                Polymer.NeonAnimatableBehavior
+            ]
+        });
+    </script>
+</dom-module>

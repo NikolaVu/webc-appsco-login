@@ -1,0 +1,170 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-form/iron-form.html">
+<link rel="import" href="../paper-card/paper-card.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html">
+
+<link rel="import" href="../neon-animation/neon-animatable-behavior.html">
+<link rel="import" href="../neon-animation/animations/slide-from-right-animation.html">
+<link rel="import" href="../neon-animation/animations/slide-right-animation.html">
+
+<link rel="import" href="appsco-form-error.html">
+<link rel="import" href="appsco-loader.html">
+
+<link rel="import" href="style-shared.html">
+
+<!--
+`appsco-form`
+Appsco form component
+
+@demo demo/appsco-form.html
+@demo demo/index.html - complete demo for all elements.
+-->
+
+<dom-module id="appsco-form">
+    <template>
+        <style include="iron-flex iron-flex-alignment">
+            :host {
+                display: block;
+                background-color: var(--default-background-color);
+                @apply(--paper-font-common-base);
+                @apply(--appsco-form-common);
+                @apply(--appsco-form-reset-password);
+            }
+            :host .content-wrapper-info {
+                margin-bottom: 20px;
+            }
+            :host.iron-selected {
+                position: relative;
+            }
+            :host .link {
+                color: var(--link-color);
+            }
+        </style>
+
+        <paper-card heading="[[ title ]]">
+            <div class="card-content layout vertical">
+
+                <div class="content-wrapper content-wrapper-info"><content select=".content-info"></content></div>
+
+                <form-error message="[[ _error ]]"></form-error>
+
+                <form is="iron-form"
+                      method="[[ method ]]"
+                      action="[[ action ]]"
+                      id="appscoForm"
+                      on-input="__handleInputChange"
+                      on-iron-form-presubmit="__handleFormPresubmit"
+                      on-iron-form-error="__handleFormError"
+                      on-iron-form-response="__handleFormResponse">
+
+                    <div class="content-wrapper">
+                        <content select=".content-form"></content>
+
+                        <paper-button class="btn-primary btn-block mt-30" on-tap="__submitForm">[[ actionName ]]</paper-button>
+                    </div>
+                </form>
+
+                <appsco-loader active="[[ _loader ]]" loader-alt="Appsco is signing you in" multi-color></appsco-loader>
+
+                <div class="content-wrapper"><content select=".content-additional-info"></content></div>
+
+            </div>
+        </paper-card>
+
+    </template>
+
+    <script>
+        Polymer({
+
+            is: 'appsco-form',
+
+            properties: {
+                title: {
+                    type: String,
+                    value: 'Form title'
+                },
+
+                actionName: {
+                    type: String,
+                    value: 'Submit'
+                },
+
+                method: {
+                    type: String,
+                    value: 'get'
+                },
+
+                action: {
+                    type: String,
+                    value: '/'
+                },
+
+                _error: {
+                    type: String,
+                    value: ''
+                },
+
+                _loader: {
+                    type: Boolean,
+                    value: false,
+                    notify: true
+                },
+
+                animationConfig: {
+                    value: function() {
+                        return {
+                            'entry': {
+                                name: 'slide-from-right-animation',
+                                node: this,
+                                timing: {
+                                    duration: 300
+                                }
+                            },
+                            'exit': {
+                                name: 'slide-right-animation',
+                                node: this,
+                                timing: {
+                                    duration: 200
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+
+            behaviors: [
+                Polymer.NeonAnimatableBehavior
+            ],
+
+            __submitForm: function() {
+                this.$.appscoForm.submit();
+            },
+
+            __handleInputChange: function() {
+                this._error = '';
+            },
+
+            __handleFormPresubmit: function() {
+                this._loader = true;
+            },
+
+            __handleFormError: function(event) {
+
+                // Timeout to be removed - this is for loader presentation.
+                setTimeout(function() {
+
+                    this._error = event.detail.error.message;
+
+                    this._loader = false;
+
+                }.bind(this), 2000);
+            },
+
+            __handleFormResponse: function(event) {
+                this._loader = false;
+            }
+        });
+    </script>
+</dom-module>
