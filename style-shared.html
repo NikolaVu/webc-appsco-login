@@ -1,0 +1,156 @@
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet'>
+
+<style is="custom-style">
+    :root {
+        --appsco-purple-color: #C82F72;
+        --appsco-green-color: #82B346;
+        --appsco-blue-color: #0D8FC0;
+        --appsco-yellow-color: #D4C125;
+        --text-color: #7e97b2;
+        --text-color-light: #c8d6e4;
+        --primary-color: #03BCFF;
+        --danger-color: #ff0000;
+        --default-background-color: #ffffff;
+        --border-color: #d5d8d8;
+        --divider-color: #eaeaea;
+        --info-background-color: #edf9ff;
+        --border-radius-round: 50%;
+        --font-size-small: 12px;
+        --border-radius-round: 50%;
+        --account-background: #ffffff;
+        --account-background-hover: #f5f5f5;
+        --link-color: var(--primary-color);
+
+        --paper-font-common-base: {
+             font-family: "Open Sans";
+             font-weight: normal;
+         };
+
+        --paper-card-background-color: var(--default-background-color);
+        --paper-card-header-color: var(--text-color);
+        --paper-card-header-text: {
+             font-size: 28px;
+         };
+        --paper-card: {
+             width: 100%;
+             margin: 0 auto;
+            @apply(--shadow-elevation-6dp);
+         };
+        --paper-card-content: {
+             position: initial;
+         };
+
+        --paper-checkbox-label-color: var(--text-color);
+        --paper-checkbox-unchecked-color: var(--paper-checkbox-label-color);
+        --paper-checkbox-unchecked-ink-color: var(--primary-color);
+        --paper-checkbox-checked-ink-color: var(--paper-checkbox-unchecked-color);
+
+        --paper-input-container-color: var(--text-color-light);
+        --paper-input-container-focus-color: var(--text-color);
+        --paper-input-container-input-color: var(--text-color);
+
+        --paper-input-container-underline-focus: {
+             height: 1px;
+         };
+
+        --paper-button: {
+             padding: 10px 12px;
+             margin-left: 0;
+             margin-right: 0;
+             border-radius: 0;
+             font-size: 14px;
+             font-weight: bold;
+         };
+
+        --round-element: {
+             border-radius: var(--border-radius-round);
+         };
+
+        --form-error-text-color: var(--danger-color);
+        --form-error-background-color: #ffefef;
+    }
+    :root {
+        color: var(--text-color);
+    }
+    :root h1 {
+        font-weight: normal;
+    }
+    :root a {
+        color: var(--link-color);
+        text-decoration: none;
+    }
+    :root img {
+        max-width: 100%;
+    }
+    :root .mt-10 {
+        margin-top: 10px;
+    }
+    :root .mt-30 {
+        margin-top: 30px;
+    }
+    :root .mt-50 {
+        margin-top: 50px;
+    }
+    :root .text-center {
+        text-align: center;
+    }
+    :root .text-right {
+        text-align: right;
+    }
+    :root .cursor-pointer:hover {
+        cursor: pointer;
+    }
+    :root .pull-left {
+        float: left;
+    }
+    :root .clearfix:before, :root .clearfix:after {
+        content: " ";
+        display: table;
+    }
+    :root .clearfix:after {
+        clear: both;
+    }
+    :root .truncate {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    :root paper-button.btn-primary {
+        background-color: var(--primary-color);
+        color: #ffffff;
+    }
+    :root paper-button.btn-danger {
+        background-color: var(--danger-color);
+        color: #ffffff;
+    }
+    :root paper-button.btn-block {
+        width: 100%;
+    }
+    :root .content-wrapper a {
+        font-weight: bold;
+    }
+    :root .content-wrapper {
+        font-size: var(--font-size-small);
+    }
+    :root .additional-info-section {
+        font-size: var(--font-size-small);
+        @apply(--additional-section);
+    }
+    :root .link {
+        padding: 0;
+        min-width: initial;
+        background-color: transparent;
+        font-size: inherit;
+        text-transform: uppercase;
+        font-weight: bold;
+        @apply(--emhpasised-link);
+    }
+    :root paper-checkbox #checkbox {
+        border-radius: 0;
+    }
+    :root .divider {
+        width: 100%;
+        height: 1px;
+        background-color: var(--divider-color);
+    }
+</style>

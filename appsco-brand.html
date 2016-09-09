@@ -1,0 +1,78 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="style-shared.html">
+
+<!--
+`appsco-brand`
+Appsco brand component
+
+@demo demo/appsco-brand.html
+@demo demo/index.html - complete demo for all elements.
+-->
+
+<dom-module id="appsco-brand">
+    <template>
+        <style include="iron-flex iron-flex-alignment">
+            :host {
+                display: inline-block;
+                padding: 10px;
+                @apply(--paper-font-common-base);
+                @apply(--brand-style);
+            }
+            :host .logo {
+                float: left;
+                margin-right: 10px;
+                @apply(--brand-logo);
+            }
+            :host .clearfix:before, :host .clearfix:after {
+                content: " ";
+                display: table;
+            }
+            :host .clearfix:after {
+                clear: both;
+            }
+        </style>
+
+        <div id="brand" class="brand clearfix">
+            <img src="[[ logo ]]" alt="[[ title ]]" width="[[ size ]]" height="[[ size ]]" class="logo">
+            [[ title ]]
+        </div>
+
+    </template>
+
+    <script>
+        Polymer({
+
+            is: 'appsco-brand',
+
+            properties: {
+                logo: {
+                    type: String,
+                    value: 'https://appsco.com/bundles/appscodashboardapproot/img/appsco-logo.png'
+                },
+
+                title: {
+                    type: String
+                },
+
+                size: {
+                    type: Number,
+                    value: 32
+                }
+            },
+
+            ready: function() {
+                this.__setStyle();
+            },
+
+            __setStyle: function() {
+
+                if (this.size && this.size != 0 && this.size != '') {
+                    this.$.brand.style.fontSize = (this.size / 1.8) + 'px';
+                    this.$.brand.style.lineHeight = this.size + 'px';
+                }
+
+            }
+        });
+    </script>
+</dom-module>
