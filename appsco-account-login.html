@@ -9,6 +9,8 @@
 <link rel="import" href="../neon-animation/animations/slide-from-right-animation.html">
 <link rel="import" href="../neon-animation/animations/slide-right-animation.html">
 
+<link rel="import" href="../iron-a11y-keys/iron-a11y-keys.html">
+
 <link rel="import" href="appsco-form-error.html">
 <link rel="import" href="appsco-loader.html">
 
@@ -98,6 +100,12 @@ Appsco account login component
             </div>
         </paper-card>
 
+        <iron-a11y-keys 
+            target="[[ _target ]]" 
+            keys="enter" 
+            on-keys-pressed="__onEnter">
+        </iron-a11y-keys>
+
     </template>
 
     <script>
@@ -146,6 +154,13 @@ Appsco account login component
                     type: Boolean,
                     value: false,
                     notify: true
+                },
+
+                _target: {
+                    type: Object,
+                    value: function() {
+                        return this.$.accountLoginForm
+                    }
                 },
 
                 animationConfig: {
@@ -219,6 +234,10 @@ Appsco account login component
 
             __handleFormResponse: function(event) {
                 this._loader = false;
+            },
+
+            __onEnter: function() {
+                this.__submitForm();
             }
         });
     </script>

@@ -9,6 +9,8 @@
 <link rel="import" href="../neon-animation/animations/slide-right-animation.html">
 <link rel="import" href="../neon-animation/neon-animatable-behavior.html">
 
+<link rel="import" href="../iron-a11y-keys/iron-a11y-keys.html">
+
 <link rel="import" href="appsco-form-error.html">
 <link rel="import" href="appsco-loader.html">
 
@@ -63,7 +65,6 @@ Appsco signup form component
                             type="email" 
                             name="username" 
                             label="email" 
-                            auto-validate 
                             pattern="^(([^<>()[\]\\.,;:\s@']+(\.[^<>()[\]\\.,;:\s@']+)*)|('.+'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$" 
                             error-message="Please type correct email address."
                             on-change="__validateInput"
@@ -80,6 +81,12 @@ Appsco signup form component
 
             </div>
         </paper-card>
+
+        <iron-a11y-keys 
+            target="[[ _target ]]" 
+            keys="enter" 
+            on-keys-pressed="__onEnter">
+        </iron-a11y-keys>
 
     </template>
 
@@ -117,6 +124,13 @@ Appsco signup form component
                 _loader: {
                     type: Boolean,
                     value: false
+                },
+
+                _target: {
+                    type: Object,
+                    value: function() {
+                        return this.$.appscoSignupForm
+                    }
                 },
 
                 animationConfig: {
@@ -169,7 +183,18 @@ Appsco signup form component
             },
 
             __validateInput: function(event) {
-                event.target.validate();
+                var input = event.target;
+
+                if (input.value != '') {
+                    input.validate();
+                }
+                else {
+                    event.target.invalid = false;
+                }
+            },
+
+            __onEnter: function() {
+                this.__submitForm();
             }
         });
     </script>

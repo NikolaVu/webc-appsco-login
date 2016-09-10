@@ -10,10 +10,10 @@
 <link rel="import" href="../neon-animation/animations/slide-left-animation.html">
 <link rel="import" href="../neon-animation/animations/slide-from-right-animation.html">
 <link rel="import" href="../neon-animation/animations/slide-right-animation.html">
-
 <link rel="import" href="../neon-animation/neon-animatable-behavior.html">
 
 <link rel="import" href="../iron-localstorage/iron-localstorage.html">
+<link rel="import" href="../iron-a11y-keys/iron-a11y-keys.html">
 
 <link rel="import" href="appsco-form-error.html">
 <link rel="import" href="appsco-loader.html">
@@ -87,7 +87,7 @@ Appsco login form component
                             <span class="flex text-right cursor-pointer" on-tap="__showResetPassword">Password forgotten?</span>
                         </div>
 
-                        <paper-button class="btn-primary btn-block mt-30" on-tap="__submitForm">[[ actionName ]]</paper-button>
+                        <paper-button type="submit" class="btn-primary btn-block mt-30" on-tap="__submitForm">[[ actionName ]]</paper-button>
                 </form>
 
                 <template is="dom-if" if="[[ _loginWithExists ]]">
@@ -105,6 +105,12 @@ Appsco login form component
 
             </div>
         </paper-card>
+
+        <iron-a11y-keys 
+            target="[[ _target ]]" 
+            keys="enter" 
+            on-keys-pressed="__onEnter">
+        </iron-a11y-keys>
 
     </template>
 
@@ -165,6 +171,13 @@ Appsco login form component
                 _loginWithExists: {
                     type: Boolean,
                     value: false
+                },
+
+                _target: {
+                    type: Object,
+                    value: function() {
+                        return this.$.appscoLoginForm
+                    }
                 },
 
                 animationConfig: {
@@ -237,7 +250,18 @@ Appsco login form component
             },
 
             __validateInput: function(event) {
-                event.target.validate();
+                var input = event.target;
+
+                if (input.value != '') {
+                    input.validate();
+                }
+                else {
+                    event.target.invalid = false;
+                }
+            },
+
+            __onEnter: function() {
+                this.__submitForm();
             }
         });
     </script>

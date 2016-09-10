@@ -458,7 +458,11 @@ It shows how to use login screens inside another custom element.
             // If autofocus is set on paper-input it makes page transition inconsistent.
             // This way we listen on page animation to finish so we can set focus on input.
             __resetForm: function(fromPage) {
-                fromPage.querySelector('form').reset();
+                var form = fromPage.querySelector('form');
+
+                if (form) {
+                    form.reset();
+                }
             
                 // Remove error from form.
                 if (fromPage._error) {

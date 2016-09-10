@@ -10,7 +10,8 @@
     "iron-localstorage": "PolymerElements/iron-localstorage#^1.0.6",
     "neon-animation": "PolymerElements/neon-animation#^1.2.4",
     "paper-checkbox": "PolymerElements/paper-checkbox#^1.4.0",
-    "paper-spinner": "PolymerElements/paper-spinner#^1.2.0"
+    "paper-spinner": "PolymerElements/paper-spinner#^1.2.0",
+    "iron-a11y-keys": "^1.0.6"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
