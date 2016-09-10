@@ -27,21 +27,17 @@
 
     <demo-snippet>
 
-        <template is="dom-bind" id="appscoAccountLogin">
+        <template is="dom-bind" id="appscoAccountLoginDemo">
 
             <appsco-account-login
                     title="Account login"
+                    method="post"
+                    action="/account-login"
                     account='{
-                                "id": "2",
                                 "email": "nikola.vucinic@boutsourcing.com",
                                 "first_name": "Nikola",
                                 "last_name": "Vucinic",
-                                "locale": "Europe/Serbia",
-                                "gender": "m",
-                                "country": "RS",
-                                "phone": "null",
-                                "picture_url": "http://app-layout-assets.appspot.com/assets/PharrellWilliams.jpg",
-                                "info": "This account is managed by boutsourcing.com."
+                                "picture_url": "https://my-dev.appsco.com/bundles/appscodashboardapproot/img/profile-avatar.png"
                             }'
                             >
             </appsco-account-login>

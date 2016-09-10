@@ -1,4 +1,5 @@
 <link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html">
 
 <link rel="import" href="style-shared.html">
 
@@ -20,20 +21,12 @@ Appsco brand component
                 @apply(--brand-style);
             }
             :host .logo {
-                float: left;
                 margin-right: 10px;
                 @apply(--brand-logo);
             }
-            :host .clearfix:before, :host .clearfix:after {
-                content: " ";
-                display: table;
-            }
-            :host .clearfix:after {
-                clear: both;
-            }
         </style>
 
-        <div id="brand" class="brand clearfix">
+        <div id="brand" class="brand layout horizontal">
             <img src="[[ logo ]]" alt="[[ title ]]" width="[[ size ]]" height="[[ size ]]" class="logo">
             [[ title ]]
         </div>

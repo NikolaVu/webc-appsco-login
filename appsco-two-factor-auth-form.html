@@ -3,48 +3,33 @@
 <link rel="import" href="../paper-card/paper-card.html">
 <link rel="import" href="../paper-input/paper-input.html">
 <link rel="import" href="../paper-button/paper-button.html">
-<link rel="import" href="../paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html">
 
-<link rel="import" href="../neon-animation/animations/slide-from-left-animation.html">
-<link rel="import" href="../neon-animation/animations/slide-left-animation.html">
 <link rel="import" href="../neon-animation/animations/slide-from-right-animation.html">
 <link rel="import" href="../neon-animation/animations/slide-right-animation.html">
-
 <link rel="import" href="../neon-animation/neon-animatable-behavior.html">
-
-<link rel="import" href="../iron-localstorage/iron-localstorage.html">
 
 <link rel="import" href="appsco-form-error.html">
 <link rel="import" href="appsco-loader.html">
-<link rel="import" href="login-with.html">
 
 <link rel="import" href="style-shared.html">
 
 <!--
-`appsco-login-form`
-Appsco login form component
+`appsco-two-factor-auth-form`
+Appsco two factor auth form component
 
-@demo demo/appsco-login-form.html
+@demo demo/appsco-two-factor-auth-form.html
 @demo demo/index.html - complete demo for all elements.
 -->
 
-<dom-module id="appsco-login-form">
+<dom-module id="appsco-two-factor-auth-form">
     <template>
         <style include="iron-flex iron-flex-alignment">
             :host {
                 display: block;
                 @apply(--paper-font-common-base);
                 @apply(--appsco-form-common);
-                @apply(--appsco-form-login);
-
-                --paper-checkbox-size: 16px;
-            }
-            :host.iron-selected {
-                position: relative;
-            }
-            :host .remember-me-section {
-                font-size: var(--font-size-small);
+                @apply(--appsco-form-signup);
             }
             :host .link {
                 color: var(--link-color);
@@ -65,43 +50,28 @@ Appsco login form component
                 <form is="iron-form"
                       method="[[ method ]]"
                       action="[[ action ]]"
-                      id="appscoLoginForm"
+                      id="appscoTwoFactorAuthForm"
                       on-input="__handleInputChange"
                       on-iron-form-presubmit="__handleFormPresubmit"
                       on-iron-form-error="__handleFormError"
                       on-iron-form-response="__handleFormResponse">
 
                         <paper-input 
-                            type="email" 
-                            name="username" 
-                            id="username" 
-                            label="email" 
-                            pattern="^(([^<>()[\]\\.,;:\s@']+(\.[^<>()[\]\\.,;:\s@']+)*)|('.+'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$" 
-                            error-message="Please type correct email address."
+                            type="text" 
+                            name="auth-code" 
+                            label="authentication code" 
+                            pattern="[0-9]*" 
+                            error-message="Authentication code can contain numbers only."
                             on-change="__validateInput"
                             required></paper-input>
-                        <paper-input type="password" name="password" id="password" label="password" required></paper-input>
-
-                        <div class="remember-me-section layout horizontal mt-10">
-                            <paper-checkbox id="rememberMe" name="rememberMe" class="flex" on-change="__handleRememberMeChange">Remember me</paper-checkbox>
-                            <span class="flex text-right cursor-pointer" on-tap="__showResetPassword">Password forgotten?</span>
-                        </div>
 
                         <paper-button class="btn-primary btn-block mt-30" on-tap="__submitForm">[[ actionName ]]</paper-button>
                 </form>
 
-                <template is="dom-if" if="[[ _loginWithExists ]]">
-                    
-                    <login-with 
-                        facebook="[[ facebookLogin ]]" 
-                        google="[[ googleLogin ]]">
-                    </login-with>
-
-                </template>
-
                 <div class="content-wrapper">
                     <content select=".content-additional-info"></content>
                 </div>
+
 
             </div>
         </paper-card>
@@ -111,7 +81,11 @@ Appsco login form component
     <script>
         Polymer({
 
-            is: 'appsco-login-form',
+            is: 'appsco-two-factor-auth-form',
+
+            behaviors: [
+                Polymer.NeonAnimatableBehavior
+            ],
 
             properties: {
                 title: {
@@ -144,41 +118,18 @@ Appsco login form component
                     value: false
                 },
 
-                rememberMe: {
-                    type: Boolean,
-                    value: false,
-                    notify: true
-                },
-
-                facebookLogin: {
-                    type: String,
-                    value: '',
-                    notify: true
-                },
-
-                googleLogin: {
-                    type: String,
-                    value: '',
-                    notify: true
-                },
-
-                _loginWithExists: {
-                    type: Boolean,
-                    value: false
-                },
-
                 animationConfig: {
                     value: function() {
                         return {
                             'entry': {
-                                name: 'slide-from-left-animation',
+                                name: 'slide-from-right-animation',
                                 node: this,
                                 timing: {
                                     duration: 300
                                 }
                             },
                             'exit': {
-                                name: 'slide-left-animation',
+                                name: 'slide-right-animation',
                                 node: this,
                                 timing: {
                                     duration: 200
@@ -189,18 +140,8 @@ Appsco login form component
                 }
             },
 
-            behaviors: [
-                Polymer.NeonAnimatableBehavior
-            ],
-
-            attached: function() {
-
-                this._loginWithExists = (this.facebookLogin && this.facebookLogin != '') || (this.googleLogin && this.googleLogin != '') ? true : false;
-
-            },
-
             __submitForm: function() {
-                this.$.appscoLoginForm.submit();
+                this.$.appscoTwoFactorAuthForm.submit();
             },
 
             __handleInputChange: function() {
@@ -208,32 +149,18 @@ Appsco login form component
             },
 
             __handleFormPresubmit: function(event) {
-                var form = event.target,
-                    basic = btoa(form.request.params.username+":"+form.request.params.password);
-
-//                form.request.queryString = '';
-//                event.target.headers.authorization = "token 4mp22mlvwv8kk00804owskwko08o8kcw0ocgoc80cksss4cg0c4n636060eu4g0sckkwsscock0848gk44ws4oowwgowkcscckgs";
-                // event.target.headers.authorization = "Basic " + basic;
                 this._loader = true;
             },
 
             __handleFormError: function(event) {
                 // this._error = event.detail.error.message;
-                this._error = 'Error occured. Please try again';
+                this._error = 'Error occured. Please try again.';
 
                 this._loader = false;
             },
 
             __handleFormResponse: function() {
                 this._loader = false;
-            },
-
-            __handleRememberMeChange: function() {
-                this.rememberMe = !this.rememberMe;
-            },
-
-            __showResetPassword: function() {
-                this.fire('show-reset-password-form');
             },
 
             __validateInput: function(event) {

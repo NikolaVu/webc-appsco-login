@@ -17,10 +17,12 @@
 <link rel="import" href="appsco-brand.html">
 
 <link rel="import" href="appsco-form-error.html">
-<link rel="import" href="appsco-form.html">
 <link rel="import" href="appsco-login-form.html">
 <link rel="import" href="appsco-accounts.html">
 <link rel="import" href="appsco-account-login.html">
+<link rel="import" href="appsco-two-factor-auth-form.html">
+<link rel="import" href="appsco-signup-form.html">
+<link rel="import" href="appsco-reset-password-form.html">
 <link rel="import" href="login-with.html">
 
 <!--
@@ -57,6 +59,7 @@ It shows how to use login screens inside another custom element.
                              on-neon-animation-finish="__onPageAnimationFinish">
 
                 <appsco-login-form
+                        id="appscoLoginForm"
                         name="login-form"
                         method="get"
                         action="http://appsco.loc/app_dev.php/api/v2/me"
@@ -65,21 +68,32 @@ It shows how to use login screens inside another custom element.
                         remember-me="{{ _rememberMe }}"
                         facebook-login="/facebook"
                         google-login="/google"
-                        has-accounts="[[ _hasAccounts ]]"
                         on-show-reset-password-form="__showResetPasswordForm"
-                        on-show-signup-form="__showSignupForm"
-                        on-show-account-list="__showAccountList"
                         on-iron-form-error="__handleLoginFormResponse"
                         on-iron-form-response="__handleLoginFormResponse">
 
-                    <div class="info"></div>
+                    <div class="content-info"></div>
+
+                    <div class="content-additional-info">
+                        <div class="additional-info-section text-center mt-50">
+                            <template is="dom-if" if="[[ _hasAccounts ]]">
+                                <paper-button class="link primary" on-tap="__backToAccounts">Back</paper-button>
+                                to accounts
+                            </template>
+
+                            <template is="dom-if" if="[[ !_hasAccounts ]]">
+                                Don't have account?
+                                <paper-button class="link primary" on-tap="__showSignupForm">Sign up</paper-button>
+                            </template>
+                        </div>
+                    </div>
 
                 </appsco-login-form>
 
                 <appsco-accounts
                         id="accounts"
                         name="account-list"
-                        title="[[ title ]]"
+                        title="Your accounts"
                         accounts="[[ accounts ]]"
                         remove-account="[[ _removeAccount ]]"
                         on-account-chosen="__showAccountLogin"
@@ -113,24 +127,31 @@ It shows how to use login screens inside another custom element.
                         action="/account-login"
                         title="Account login"
                         action-name="Login"
+                        account="{{ _selectedAccount }}"
+                        on-account-login-cancel="__cancelAccountLoginForm"
                         on-iron-form-error="__handleAccountLoginFormResponse"
-                        on-iron-form-response="__handleAccountLoginFormResponse"
-                        account="{{ _selectedAccount }}">
-
-                    <div class="content-form">
-                        <paper-input type="password" name="password" label="password" required></paper-input>
-                        <paper-input type="email" name="username" value="{{ _selectedAccount.email }}" hidden></paper-input>
-                    </div>
-
-                    <div class="content-additional-info">
-                        <div class="additional-info-section text-center mt-50">
-                            <paper-button class="link" on-tap="__cancelAccountLogin">Cancel</paper-button>
-                        </div>
-                    </div>
-
+                        on-iron-form-response="__handleAccountLoginFormResponse">
                 </appsco-account-login>
 
-                <appsco-form
+                <appsco-two-factor-auth-form
+                        id="appscoTwoFactorAuthForm"
+                        name="two-factor-auth-form"
+                        method="post"
+                        action="/two-factor-authentication"
+                        title="Two-factor Authentication"
+                        action-name="Submit"
+                        on-iron-form-response="__handleTwoFactorAuthFormResponse">
+
+                    <div class="content-info"></div>
+
+                    <div class="content-additional-info additional-info-section text-center mt-50">
+                        Back to
+                        <paper-button class="link primary" on-tap="__resolveLogin">Login</paper-button>
+                    </div>
+
+                </appsco-two-factor-auth-form>
+
+                <appsco-signup-form
                         name="signup-form"
                         method="post"
                         action="/signup"
@@ -139,11 +160,6 @@ It shows how to use login screens inside another custom element.
                         on-iron-form-response="__handleSignupFormResponse">
 
                     <div class="content-info"></div>
-
-                    <div class="content-form">
-                        <paper-input type="email" name="username" label="email" required></paper-input>
-                        <paper-input type="password" name="password" label="password" required></paper-input>
-                    </div>
 
                     <div class="content-additional-info">
                         <div class="mt-30">
@@ -160,9 +176,9 @@ It shows how to use login screens inside another custom element.
                         </div>
                     </div>
 
-                </appsco-form>
+                </appsco-signup-form>
 
-                <appsco-form
+                <appsco-reset-password-form
                         name="reset-password-form"
                         method="post"
                         action="/reset-password"
@@ -174,16 +190,12 @@ It shows how to use login screens inside another custom element.
                         Enter your email address and we'll send you a mail message with password reset link.
                     </div>
 
-                    <div class="content-form">
-                        <paper-input type="email" name="username" label="email" required></paper-input>
-                    </div>
-
                     <div class="content-additional-info additional-info-section text-center mt-50">
                         Back to
                         <paper-button class="link primary" on-tap="__resolveLogin">Login</paper-button>
                     </div>
 
-                </appsco-form>
+                </appsco-reset-password-form>
 
         </neon-animated-pages>
 
@@ -277,7 +289,11 @@ It shows how to use login screens inside another custom element.
                 this.selected = 'account-login';
             },
 
-            __showSignupForm: function(event) {
+            __showTwoFactorAuthForm: function() {
+                this.selected = 'two-factor-auth-form';
+            },
+
+            __showSignupForm: function() {
                 this.selected = 'signup-form';
             },
 
@@ -290,6 +306,9 @@ It shows how to use login screens inside another custom element.
                 if (this.accounts && this.accounts.length > 0) {
                     this._hasAccounts = true;
                     this.__showAccountList();
+
+                    this.$.appscoLoginForm.animationConfig.entry.name = 'slide-from-right-animation';
+                    this.$.appscoLoginForm.animationConfig.exit.name = 'slide-right-animation';
                 }
                 else {
                     this._hasAccounts = false;
@@ -320,14 +339,31 @@ It shows how to use login screens inside another custom element.
                 };
 
                 this.__saveAccountToLocalStorage();
+
+                // this.__showTwoFactorAuthForm();
+            },
+
+            __backToAccounts: function() {
+                this.$.appscoLoginForm.animationConfig.entry.name = 'slide-from-right-animation';
+                this.$.appscoLoginForm.animationConfig.exit.name = 'slide-right-animation';
+
+                this.__showAccountList();
+            },
+
+            __cancelAccountLoginForm: function() {
+                this.__showAccountList();
             },
 
             __handleAccountLoginFormResponse: function(event) {
                 console.log('Account login form response', event.detail);
+
+                this.$.appscoTwoFactorAuthForm.animationConfig.entry.name = 'slide-from-left-animation';
+
+                // this.__showTwoFactorAuthForm();
             },
 
-            __cancelAccountLogin: function() {
-                this.__showAccountList();
+            __handleTwoFactorAuthFormResponse: function(event) {
+                console.log('Two-factor authentication form response', event.detail);  
             },
 
             __handleSignupFormResponse: function(event) {
@@ -340,6 +376,9 @@ It shows how to use login screens inside another custom element.
 
             __addNewAccount: function() {
                 this.__showLoginForm();
+                
+                this.$.appscoLoginForm.animationConfig.entry.name = 'slide-from-left-animation';
+                this.$.appscoLoginForm.animationConfig.exit.name = 'slide-left-animation';
             },
 
             __accountRemoval: function() {
@@ -399,6 +438,9 @@ It shows how to use login screens inside another custom element.
                     this._removeAccount = false;
                     this.$.actionRemoveAccount.active = false;
 
+                    this.$.appscoLoginForm.animationConfig.entry.name = 'slide-from-left-animation';
+                    this.$.appscoLoginForm.animationConfig.exit.name = 'slide-left-animation';
+
                     this.__showLoginForm();
                 }
             },
@@ -415,12 +457,26 @@ It shows how to use login screens inside another custom element.
 
             // If autofocus is set on paper-input it makes page transition inconsistent.
             // This way we listen on page animation to finish so we can set focus on input.
-            __onPageAnimationFinish: function(event) {
-                var firstInputElement = event.detail.toPage.querySelector('paper-input');
-
-                if (firstInputElement) {
-                    firstInputElement.focus();
+            __resetForm: function(fromPage) {
+                fromPage.querySelector('form').reset();
+            
+                // Remove error from form.
+                if (fromPage._error) {
+                    fromPage._error = '';
                 }
+            },
+
+            __focusInputField: function(toPage) {
+                var inputToFocus = toPage.querySelector('paper-input');
+
+                if (inputToFocus) {
+                    inputToFocus.focus();
+                }
+            },
+
+            __onPageAnimationFinish: function(event) {
+                this.__resetForm(event.detail.fromPage);
+                this.__focusInputField(event.detail.toPage);
             }
         });
     </script>

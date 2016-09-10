@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-    <title>appsco-login-form demo</title>
+    <title>appsco-two-factor-auth-form demo</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
@@ -9,7 +9,7 @@
     <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
     <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
 
-    <link rel="import" href="../appsco-login-form.html">
+    <link rel="import" href="../appsco-two-factor-auth-form.html">
 
     <style is="custom-style" include="demo-pages-shared-styles">
         :root {
@@ -29,27 +29,24 @@
 <body>
 
 <div class="vertical-section-container centered">
-    <h3>Appsco login form demo</h3>
+    <h3>Appsco two factor auth form demo</h3>
 
     <demo-snippet>
 
-        <template is="dom-bind" id="loginScreen">
+        <template is="dom-bind" id="twoFactorAuthForm">
 
-            <appsco-login-form
-                    id="appscoLoginForm"
-                    name="login-form"
-                    method="get"
-                    action="http://appsco.loc/app_dev.php/api/v2/me"
-                    title="Login"
-                    action-name="Login">
+            <appsco-two-factor-auth-form
+                        name="two-factor-auth-form"
+                        method="post"
+                        action="/two-factor-authentication"
+                        title="Two-factor Authentication"
+                        action-name="Submit">
 
-                <div class="content-info">
-                </div>
+                    <div class="content-info"></div>
 
-                <div class="content-additional-info">
-                </div>
+                    <div class="content-additional-info"></div>
 
-            </appsco-login-form>
+                </appsco-two-factor-auth-form>
 
         </template>
     </demo-snippet>

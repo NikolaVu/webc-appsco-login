@@ -16,7 +16,7 @@ Appsco brand component
 
 <dom-module id="form-error">
     <template>
-        <style include="iron-flex iron-flex-alignment">
+        <style>
             :host {
                 width: 100%;
                 @apply(--paper-font-common-base);
@@ -87,23 +87,20 @@ Appsco brand component
             ],
 
             listeners: {
-                'message-changed': '__onErrorChanged',
+                'message-changed': '__checkErrorMessage',
                 'neon-animation-finish': '__onNeonAnimationFinish'
             },
 
             attached: function() {
 
-                if (!this._error) {
-                    this.style.display = 'none';
-                }
+                this.__checkErrorMessage();
 
             },
 
-            __onErrorChanged: function() {
+            __checkErrorMessage: function() {
                 var message = this.message;
 
                 if (message && message != '') {
-
                     this._message = message;
                     this.playAnimation('entry');
                     this.style.display = 'block';
